@@ -1,11 +1,29 @@
 <?php 
 
 session_start();
+if($_SESSION['id'] != ""){
+	$id = $_SESSION['id'];
+}
+else
+	header("location: login.php");
 
-$user = simplexml_load_file("record.xml");
-
-
-$name = $user->name;
+if(file_exists('users/' . $id . '.xml')){
+	$xml = new SimpleXMLElement('users/' . $id . '.xml', 0, true);
+	
+	if($xml->usertype == "Admin"){
+		$name = $xml->name;
+	}
+	else if ($xml->usertype == "User"){
+		header("location: userhomepage.php");
+	}
+	else{
+		header("location: login.php");
+	}
+}
+	
+else{
+	header("location: login.php");
+}
 
 
 ?>

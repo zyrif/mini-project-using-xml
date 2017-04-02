@@ -1,31 +1,31 @@
 <?php
 
 session_start();
-
-if($_SESSION['id'] != "")
+if($_SESSION['id'] != ""){
 	$id = $_SESSION['id'];
+}
 else
-	header("location: logout.php");
+	header("location: login.php");
 
-$file = fopen("record.txt", "r");
-
-while(!feof($file)){
-		$line = fgets($file);
-		$records = explode("\n", $line);		
-		
-		
-		foreach($records as $item){
-			$data = explode(":", $item);
-			if($data[0] == $id){
-				$name = $data[2];
-				$email = $data[3];
-				$usertype = $data[4];
-			}
-		}
-		
+if(file_exists('users/' . $id . '.xml')){
+	$xml = new SimpleXMLElement('users/' . $id . '.xml', 0, true);
+	
+	$id = $xml->id;
+	$name = $xml->name;
+	$email = $xml->email;
+	$usertype = $xml->usertype;
+	
+	if($xml->usertype == "Admin"){
+		$gohome = "./adminhomepage.php";
 	}
-
-
+	else if ($xml->usertype == "User"){
+		$gohome = "./userhomepage.php";
+	}
+}
+	
+else{
+	header("location: login.php");
+}
 
 ?>
 
@@ -41,7 +41,7 @@ while(!feof($file)){
 		<tr> <td> <p> Name </p> </td> <td> <p> <?php echo $name;?> </p> </td> </tr>
 		<tr> <td> <p> Email </p> </td> <td> <p> <?php echo $email;?> </p> </td> </tr>
 		<tr> <td> <p> User Type </p> </td> <td> <p> <?php echo $usertype;?> </p> </td> </tr>
-		<tr> <td  colspan="2"> <a href="./adminhomepage.php"> Go Home </a> </td> </tr>
+		<tr> <td  colspan="2"> <a href="<?php echo $gohome;?>"> Go Home </a> </td> </tr>
 	
 	</table>
 </body>	
